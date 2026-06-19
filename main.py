@@ -7,7 +7,7 @@ try:
     conexao = mysql.connector.connect(
         host="localhost",      
         user="root",           
-        password="V!ict@r2309",  # Sua senha mantida
+        password="*****",  
         database="banco_python"
     )
 
@@ -15,7 +15,7 @@ try:
         cursor = conexao.cursor(dictionary=True) 
         print("✅ Conectado ao MySQL com sucesso!")
         
-        # Cria a tabela de forma automática se ela não existir
+        
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS usuarios (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -28,8 +28,7 @@ try:
 
 except mysql.connector.Error as erro:
     print(f"❌ Erro ao conectar ao MySQL: {erro}")
-    exit() # Para o programa se o banco não conectar
-
+    exit() 
 
 # =====================================================================
 # 2. FUNÇÕES DO SISTEMA (CONECTADAS AO MYSQL)
@@ -41,12 +40,12 @@ def cadastrar_usuario():
     email = input("Digite o seu E-mail: ")
 
     try:
-        # AGORA SALVAMOS COM COMANDO SQL
+        
         comando = "INSERT INTO usuarios (nome, email, saldo) VALUES (%s, %s, %s)"
         valores = (nome, email, 0.0)
         
         cursor.execute(comando, valores)
-        conexao.commit() # ISSO ENVIA O USUÁRIO PARA A TABELA DO MYSQL!
+        conexao.commit() 
         print(f"\n Usuário {nome} cadastrado com sucesso no MySQL!")
         
     except mysql.connector.Error as erro:
@@ -58,10 +57,10 @@ def fazer_login():
     user_nome = input("Usuario: ")
     user_email = input("E-mail: ")
 
-    # AGORA BUSCAMOS DIRETO DA TABELA DO MYSQL
+    
     comando = "SELECT * FROM usuarios WHERE nome = %s AND email = %s"
     cursor.execute(comando, (user_nome, user_email))
-    usuario = cursor.fetchone() # Retorna o dicionário do usuário se achar, ou None se não achar
+    usuario = cursor.fetchone() 
     
     return usuario
 
@@ -81,7 +80,7 @@ def menu_banco(usuario_logado):
             if valor > 0:
                 usuario_logado['saldo'] += valor
                 
-                # Sincroniza o novo saldo com o MySQL
+                
                 comando = "UPDATE usuarios SET saldo = %s WHERE email = %s"
                 cursor.execute(comando, (usuario_logado['saldo'], usuario_logado['email']))
                 conexao.commit()
@@ -94,7 +93,7 @@ def menu_banco(usuario_logado):
             if 0 < valor <= usuario_logado['saldo']:
                 usuario_logado['saldo'] -= valor
                 
-                # Sincroniza o novo saldo com o MySQL
+               
                 comando = "UPDATE usuarios SET saldo = %s WHERE email = %s"
                 cursor.execute(comando, (usuario_logado['saldo'], usuario_logado['email']))
                 conexao.commit()
@@ -137,6 +136,6 @@ while True:
     else:
         print("❌ Opção inválida! Tente novamente.")
 
-# ESTAS DEVEM SER AS ÚLTIMAS LINHAS DE TODO O SEU ARQUIVO:
+
 cursor.close()
 conexao.close()
